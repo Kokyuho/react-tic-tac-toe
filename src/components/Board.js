@@ -13,56 +13,102 @@ class Board extends React.Component {
         ["", "", ""],
         ["", "", ""],
       ],
-      result: 0, // 0: playing, 1: winner player1, 2: winner player2
+      result: 0, // 0: playing, 1: winner X, 2: winner O
     };
     this.handleClick = this.handleClick.bind(this);
   }
 
-  evaluateBoard() {
-    console.log("evaluating"); // TODO: HERE I NEED TO EVALUATE ALL POSSIBLE WINS
+  winner(player) {
+    this.props.increaseScore(player);
+    this.props.stopGame();
     this.setState({
-      result: 1, // CHANGE THIS
+      result: player === "X" ? 1 : 2,
     });
+    console.log(`${player} wins`);
     return 1;
   }
 
+  evaluateBoard(newChips) {
+    // Put all chips in a single array
+    const flatChips = [...newChips[0], ...newChips[1], ...newChips[2]];
+
+    // Winner combinations posibilities
+    const lines = [
+      // Horizontal
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      //Vertical
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      // Diagonal
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    let winner = 0;
+    lines.forEach((line) => {
+      if (
+        flatChips[line[0]] !== "" &&
+        flatChips[line[0]] === flatChips[line[1]] &&
+        flatChips[line[1]] === flatChips[line[2]]
+      ) {
+        flatChips[line[0]] === "X" ? (winner = 1) : (winner = 2);
+        this.winner(flatChips[line[0]]);
+      }
+    });
+
+    return winner;
+  }
+
   handleClick(row, col) {
-    // Check clicked chip state
-    let chip = this.state.chips[row][col];
-
-    // If chip is empty...
-    if (chip === "") {
-      // Create new chip corresponding with active player
-      let newChip = chip;
-      if (this.props.player1Turn) {
-        newChip = "X";
-      } else {
-        newChip = "O";
-      }
-
-      // Update chips state
-      this.setState((state) => {
-        return {
-          chips: [
-            ...state.chips.slice(0, row),
-            [
-              ...state.chips[row].slice(0, col),
-              newChip,
-              ...state.chips[row].slice(col + 1),
-            ],
-            ...state.chips.slice(row + 1),
-          ],
-        };
-      });
-
-      // Evaluate board result
-      let result = this.evaluateBoard();
-
-      // Change player turn if still playing
-      if (result === 0) {
-        this.props.changeTurn();
-      }
+    // If game is not on, do nothing
+    if (!this.props.gameOn) {
+      return 0;
     }
+
+    // Get chips state
+    const chips = this.state.chips;
+
+    // Get clicked chip state
+    const chip = chips[row][col];
+
+    // If chip is not empty, do nothing
+    if (chip !== "") {
+      return 0;
+    }
+
+    // Create new chip corresponding with active player
+    let newChip = chip;
+    if (this.props.player1Turn) {
+      newChip = "X";
+    } else {
+      newChip = "O";
+    }
+
+    // Create new chips state
+    let newChips = [
+      ...chips.slice(0, row),
+      [...chips[row].slice(0, col), newChip, ...chips[row].slice(col + 1)],
+      ...chips.slice(row + 1),
+    ];
+
+    // Evaluate board with new chips state
+    let newResult = this.evaluateBoard(newChips);
+
+    // Change player turn if still playing
+    if (newResult === 0) {
+      this.props.changeTurn();
+    }
+
+    // Update chips state
+    this.setState((state) => {
+      return {
+        chips: newChips,
+        result: newResult,
+      };
+    });
   }
 
   render() {
