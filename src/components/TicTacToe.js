@@ -10,19 +10,26 @@ class TicTacToe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gameOn: true,
-      player1: { name: "Player 1", score: 0, active: true, chipType: "X" },
+      gameOn: false,
+      gameStarted: false,
+      round: 0,
+      winner: "",
+      player1: { name: "Player 1", score: 0, active: false, chipType: "X" },
       player2: { name: "Player 2", score: 0, active: false, chipType: "O" },
     };
     this.startGame = this.startGame.bind(this);
     this.stopGame = this.stopGame.bind(this);
     this.increaseScore = this.increaseScore.bind(this);
     this.changeTurn = this.changeTurn.bind(this);
+    this.handleClickStartGame = this.handleClickStartGame.bind(this);
+    this.handleClickNewRound = this.handleClickNewRound.bind(this);
+    this.board = React.createRef();
   }
 
   startGame() {
     this.setState({
       gameOn: true,
+      gameStarted: true,
     });
   }
 
@@ -32,10 +39,32 @@ class TicTacToe extends React.Component {
     });
   }
 
+  randomPlayerSelect() {
+    let startPlayer = 0;
+    const randomNum = Math.floor(Math.random() * 2);
+    if (randomNum === 0) {
+      startPlayer = 1;
+    } else {
+      startPlayer = 2;
+    }
+    this.setState((prevState) => ({
+      ...prevState,
+      player1: {
+        ...prevState.player1,
+        active: startPlayer === 1 ? true : false,
+      },
+      player2: {
+        ...prevState.player2,
+        active: startPlayer === 2 ? true : false,
+      },
+    }));
+  }
+
   increaseScore(player) {
     if (player === "X") {
       this.setState({
         ...this.state,
+        winner: player,
         player1: {
           ...this.state.player1,
           score: this.state.player1.score + 1,
@@ -44,6 +73,7 @@ class TicTacToe extends React.Component {
     } else {
       this.setState({
         ...this.state,
+        winner: player,
         player2: {
           ...this.state.player2,
           score: this.state.player2.score + 1,
@@ -68,24 +98,68 @@ class TicTacToe extends React.Component {
   }
 
   handleClickStartGame() {
-    console.log("click start game");
+    this.startGame();
+
+    // Reset scores and round
+    this.setState((prevState) => ({
+      ...prevState,
+      round: 1,
+      winner: "",
+      player1: {
+        ...prevState.player1,
+        score: 0,
+      },
+      player2: {
+        ...prevState.player2,
+        score: 0,
+      },
+    }));
+
+    // Reset board through child ref
+    this.board.current.resetBoard();
+
+    // Random player start
+    this.randomPlayerSelect();
+
+    console.log("new game started");
   }
 
   handleClickNewRound() {
+    this.startGame();
+
+    // Reset board through child ref
+    this.board.current.resetBoard();
+
+    // Increase round count
+    this.setState((prevState) => ({
+      ...prevState,
+      winner: "",
+      round: prevState.round + 1,
+    }));
+
+    // Random player start
+    this.randomPlayerSelect();
+
     console.log("click new round");
   }
 
   render() {
+    const gameStarted = this.state.gameStarted;
+    const round = this.state.round;
+    const winner = this.state.winner;
     return (
       <Wrapper>
         <div>
           <Board
+            ref={this.board}
             gameOn={this.state.gameOn}
             player1Turn={this.state.player1.active}
             changeTurn={this.changeTurn}
             stopGame={this.stopGame}
             increaseScore={this.increaseScore}
           />
+        </div>
+        <div>
           <PlayersWrapper>
             <Player
               name={this.state.player1.name}
@@ -100,10 +174,17 @@ class TicTacToe extends React.Component {
               chipType={this.state.player2.chipType}
             />
           </PlayersWrapper>
-        </div>
-        <div>
-          <Button text="Start Game" onClick={this.handleClickStartGame} />
+          <Button
+            text={gameStarted ? "Start New Game" : "Start Game"}
+            onClick={this.handleClickStartGame}
+          />
           <Button text="New Round" onClick={this.handleClickNewRound} />
+          <h3>
+            {gameStarted
+              ? `Game started. Round ${round}`
+              : "Click 'Start Game' to start"}
+          </h3>
+          <h3>{winner ? `${winner} wins!` : ""}</h3>
         </div>
       </Wrapper>
     );
@@ -114,12 +195,13 @@ export default TicTacToe;
 
 const Wrapper = styled.div`
   display: grid;
-  border: dashed 1px white; // to be removed
+  /* border: dashed 1px white; // to be removed */
   grid-template-columns: 1fr 1fr;
 `;
 
 const PlayersWrapper = styled.div`
   display: grid;
-  border: dashed 1px white; // to be removed
+  /* border: dashed 1px white; // to be removed */
   grid-template-columns: 1fr 1fr;
+  padding: 0 20px;
 `;

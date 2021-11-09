@@ -13,6 +13,7 @@ class Board extends React.Component {
         ["", "", ""],
         ["", "", ""],
       ],
+      winLine: null,
       result: 0, // 0: playing, 1: winner X, 2: winner O
     };
     this.handleClick = this.handleClick.bind(this);
@@ -24,7 +25,6 @@ class Board extends React.Component {
     this.setState({
       result: player === "X" ? 1 : 2,
     });
-    console.log(`${player} wins`);
     return 1;
   }
 
@@ -56,10 +56,25 @@ class Board extends React.Component {
       ) {
         flatChips[line[0]] === "X" ? (winner = 1) : (winner = 2);
         this.winner(flatChips[line[0]]);
+        this.setState({
+          winLine: line,
+        });
       }
     });
 
     return winner;
+  }
+
+  resetBoard() {
+    this.setState({
+      chips: [
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+      ],
+      winLine: null,
+      result: 0, // 0: playing, 1: winner X, 2: winner O
+    });
   }
 
   handleClick(row, col) {
@@ -112,35 +127,126 @@ class Board extends React.Component {
   }
 
   render() {
+    const gameOn = this.props.gameOn;
     return (
       <Content>
-        <div onClick={() => this.handleClick(0, 0)}>
-          <Chip type={this.state.chips[0][0]} />
-        </div>
-        <div onClick={() => this.handleClick(0, 1)}>
-          <Chip type={this.state.chips[0][1]} />
-        </div>
-        <div onClick={() => this.handleClick(0, 2)}>
-          <Chip type={this.state.chips[0][2]} />
-        </div>
-        <div onClick={() => this.handleClick(1, 0)}>
-          <Chip type={this.state.chips[1][0]} />
-        </div>
-        <div onClick={() => this.handleClick(1, 1)}>
-          <Chip type={this.state.chips[1][1]} />
-        </div>
-        <div onClick={() => this.handleClick(1, 2)}>
-          <Chip type={this.state.chips[1][2]} />
-        </div>
-        <div onClick={() => this.handleClick(2, 0)}>
-          <Chip type={this.state.chips[2][0]} />
-        </div>
-        <div onClick={() => this.handleClick(2, 1)}>
-          <Chip type={this.state.chips[2][1]} />
-        </div>
-        <div onClick={() => this.handleClick(2, 2)}>
-          <Chip type={this.state.chips[2][2]} />
-        </div>
+        <ChipWrapper
+          onClick={() => this.handleClick(0, 0)}
+          pointer={!gameOn || this.state.chips[0][0] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[0][0]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(0)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(0, 1)}
+          pointer={!gameOn || this.state.chips[0][1] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[0][1]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(1)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(0, 2)}
+          pointer={!gameOn || this.state.chips[0][2] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[0][2]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(2)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(1, 0)}
+          pointer={!gameOn || this.state.chips[1][0] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[1][0]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(3)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(1, 1)}
+          pointer={!gameOn || this.state.chips[1][1] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[1][1]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(4)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(1, 2)}
+          pointer={!gameOn || this.state.chips[1][2] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[1][2]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(5)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(2, 0)}
+          pointer={!gameOn || this.state.chips[2][0] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[2][0]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(6)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(2, 1)}
+          pointer={!gameOn || this.state.chips[2][1] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[2][1]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(7)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
+        <ChipWrapper
+          onClick={() => this.handleClick(2, 2)}
+          pointer={!gameOn || this.state.chips[2][2] ? "" : "pointer"}
+        >
+          <Chip
+            type={this.state.chips[2][2]}
+            highlight={
+              this.state.winLine && this.state.winLine.includes(8)
+                ? true
+                : false
+            }
+          />
+        </ChipWrapper>
       </Content>
     );
   }
@@ -153,12 +259,20 @@ const Content = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   border: 2px white solid;
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   > div {
     border: 2px solid white;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+`;
+
+const ChipWrapper = styled.div`
+  border: 2px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: ${(props) => props.pointer};
 `;

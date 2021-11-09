@@ -24,7 +24,7 @@ const StyledPlayer = styled.div`
   border-style: solid;
   border-width: ${(props) => (props.active ? "2px" : "1px")};
   border-radius: 40px;
-  margin: 20px;
+  margin: 0 20px;
   > p {
     margin: 10px 0;
   }

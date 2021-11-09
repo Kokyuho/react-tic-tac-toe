@@ -4,7 +4,7 @@ import styled from "styled-components";
 class Chip extends React.Component {
   render() {
     return (
-      <Content>
+      <Content highlight={this.props.highlight}>
         <p>{this.props.type}</p>
       </Content>
     );
@@ -14,7 +14,20 @@ class Chip extends React.Component {
 export default Chip;
 
 const Content = styled.div`
-  font-size: 4rem;
+  font-size: ${(props) => (props.highlight ? "6rem" : "4rem")};
+  /* transition: all 1s ease; */
+  @keyframes win {
+    0% {
+      font-size: 4rem;
+    }
+    50% {
+      font-size: 8rem;
+    }
+    100% {
+      font-size: 6rem;
+    }
+  }
+  animation: ${(props) => (props.highlight ? "win 0.5s linear 0s" : "")};
   > p {
     font-family: "Fredoka One", cursive;
     margin: 0;
