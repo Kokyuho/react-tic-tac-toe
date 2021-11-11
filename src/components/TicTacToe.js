@@ -23,6 +23,8 @@ class TicTacToe extends React.Component {
     this.changeTurn = this.changeTurn.bind(this);
     this.handleClickStartGame = this.handleClickStartGame.bind(this);
     this.handleClickNewRound = this.handleClickNewRound.bind(this);
+    this.handleNameChangePlayer1 = this.handleNameChangePlayer1.bind(this);
+    this.handleNameChangePlayer2 = this.handleNameChangePlayer2.bind(this);
     this.board = React.createRef();
   }
 
@@ -143,6 +145,24 @@ class TicTacToe extends React.Component {
     console.log("click new round");
   }
 
+  handleNameChangePlayer1(event) {
+    this.setState((prevState) => ({
+      player1: {
+        ...prevState.player1,
+        name: event.target.value,
+      },
+    }));
+  }
+
+  handleNameChangePlayer2(event) {
+    this.setState((prevState) => ({
+      player2: {
+        ...prevState.player2,
+        name: event.target.value,
+      },
+    }));
+  }
+
   render() {
     const gameStarted = this.state.gameStarted;
     const round = this.state.round;
@@ -166,12 +186,14 @@ class TicTacToe extends React.Component {
               score={this.state.player1.score}
               active={this.state.player1.active}
               chipType={this.state.player1.chipType}
+              handleNameChange={this.handleNameChangePlayer1}
             />
             <Player
               name={this.state.player2.name}
               score={this.state.player2.score}
               active={this.state.player2.active}
               chipType={this.state.player2.chipType}
+              handleNameChange={this.handleNameChangePlayer2}
             />
           </PlayersWrapper>
           <Button
@@ -184,7 +206,9 @@ class TicTacToe extends React.Component {
               ? `Game started. Round ${round}`
               : "Click 'Start Game' to start"}
           </h3>
-          <h3>{winner ? `${winner} wins!` : ""}</h3>
+          <h3>
+            {winner ? `${winner} wins!` : "Click Player name to change it."}
+          </h3>
         </div>
       </Wrapper>
     );
