@@ -32,4 +32,19 @@ const Content = styled.div`
     font-family: "Fredoka One", cursive;
     margin: 0;
   }
+
+  @media screen and (max-width: 1000px) {
+    font-size: ${(props) => (props.highlight ? "4rem" : "3rem")};
+    @keyframes win {
+      0% {
+        font-size: 3rem;
+      }
+      50% {
+        font-size: 5rem;
+      }
+      100% {
+        font-size: 4rem;
+      }
+    }
+  }
 `;

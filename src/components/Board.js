@@ -267,6 +267,11 @@ const Content = styled.div`
     justify-content: center;
     align-items: center;
   }
+
+  @media screen and (max-width: 1000px) {
+    width: 300px;
+    height: 300px;
+  }
 `;
 
 const ChipWrapper = styled.div`

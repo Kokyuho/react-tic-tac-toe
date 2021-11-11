@@ -221,6 +221,10 @@ const Wrapper = styled.div`
   display: grid;
   /* border: dashed 1px white; // to be removed */
   grid-template-columns: 1fr 1fr;
+
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const PlayersWrapper = styled.div`

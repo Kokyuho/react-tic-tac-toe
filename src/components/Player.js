@@ -54,7 +54,11 @@ class Player extends React.Component {
 
 export default Player;
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  @media screen and (max-width: 1000px) {
+    margin-top: 20px;
+  }
+`;
 
 const StyledPlayer = styled.div`
   border-color: ${(props) => (props.active ? "yellow" : "white")};
